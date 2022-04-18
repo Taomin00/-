@@ -144,16 +144,16 @@ void VisualOdometry::featureMatchingByFlann()
         match_2dkp_index_.push_back(m.trainIdx);
     }
     //绘制两两图像的匹配结果 04162100 可视化
-    // if(F_num>1)//从第二帧图像开始绘制(1-2,2-3,3-4等等)
-    // {
-    //     cout<<"--------可视化---------"<<endl;
-    //     cv::Mat img_feature_show;
-    //     //cv::imshow("上一帧",ref_->color_);
-    //     //cv::imshow("当前帧",curr_->color_);//能输出前后两帧图像
-    //     cv::drawMatches(ref_->color_, keypointors_ref_show, curr_->color_, keypoints_curr_, feature_matches_, img_feature_show);
-    //     cv::imshow("相邻两帧匹配结果：",img_feature_show);
-    //     cv::waitKey(1000);
-    // }
+    if(F_num>1)//从第二帧图像开始绘制(1-2,2-3,3-4等等)
+    {
+        cout<<"--------可视化---------"<<endl;
+        cv::Mat img_feature_show;
+        //cv::imshow("上一帧",ref_->color_);
+        //cv::imshow("当前帧",curr_->color_);//能输出前后两帧图像
+        cv::drawMatches(ref_->color_, keypointors_ref_show, curr_->color_, keypoints_curr_, feature_matches_, img_feature_show);
+        cv::imshow("相邻两帧匹配结果：",img_feature_show);
+        cv::waitKey(100);
+    }
     cout<<"good matches: "<<feature_matches_.size()<<endl;
     cout<<"match cost time: "<<timer.elapsed()<<endl;
 }
@@ -258,21 +258,20 @@ void VisualOdometry::featureMatchingOptimization()
 //经过简单验证：正是此原因 //04181520
 //改正：match_2dkp_index_.push_back(vIndices[matches[0].trainIdx]);
 
-            //good_matches.push_back(matches[0]); 可视化
+            matches[0].queryIdx = i;//重新给matches中查询点和被查询点的索引值赋值
+            matches[0].trainIdx = vIndices[matches[0].trainIdx];//使得用于匹配的描述子和关键点能够对应起来
+            good_matches.push_back(matches[0]); //可视化
         }
     }
-    
     //  //绘制两两图像的匹配结果 04162100 可视化     //此段代码无用！！！！！
-    // if(F_num>1)//从第二帧图像开始绘制(1-2,2-3,3-4等等)
-    // {
-    //     cout<<"------------可视化---------"<<endl;
-    //     cv::Mat img_feature_show;
-    //     //cv::imshow("上一帧",ref_->color_);
-    //     //cv::imshow("当前帧",curr_->color_);//能输出前后两帧图像
-    //     cv::drawMatches(ref_->color_, keypointors_ref_show, curr_->color_, keypoints_curr_, good_matches, img_feature_show);
-    //     cv::imshow("相邻两帧匹配结果：",img_feature_show);
-    //     cv::waitKey(1000);
-    // }
+    cout<<"------------可视化---------"<<endl;
+    cv::Mat img_feature_show;
+    //cv::imshow("上一帧",ref_->color_);
+    //cv::imshow("当前帧",curr_->color_);//能输出前后两帧图像
+    cv::drawMatches(ref_->color_, keypointors_ref_show, curr_->color_, keypoints_curr_, good_matches, img_feature_show);
+    cv::imshow("相邻两帧匹配结果：",img_feature_show);
+    cv::waitKey(100);
+
     cout<<"good matches: "<<match_3dpcam_.size() <<endl;
     cout<<"match cost time: "<<timer.elapsed() <<endl;
 }
